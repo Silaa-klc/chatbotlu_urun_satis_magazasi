@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Moda Dünyası | AI Destekli Alışveriş{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="{{ url_for('index') }}" class="navbar-brand">🛍️ Moda Dünyası</a>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}">Ana Sayfa</a>
+                <a href="{{ url_for('kadin') }}">Kadın</a>
+                <a href="{{ url_for('erkek') }}">Erkek</a>
+                <a href="{{ url_for('hakkimizda') }}">Hakkımızda</a>
+            </div>
+            <div class="nav-icons">
+                <a href="{{ url_for('sepet') }}" class="cart-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span id="cartCount" class="cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Moda Dünyası. Tüm hakları saklıdır.</p>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span>🤖 Moda Asistanı</span>
+                <button class="close-chat" id="closeChat"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    Merhaba! Size nasıl yardımcı olabilirim? (Örn: "Kırmızı elbise arıyorum")
+                </div>
+            </div>
+            <div class="chat-input-area">
+                <button id="createOutfitBtn" class="outfit-btn" title="Kombin Hazırla"><i class="fas fa-magic"></i></button>
+                <input type="text" id="chatInput" placeholder="Mesajınız...">
+                <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button class="chat-toggle-btn" id="chatToggle">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

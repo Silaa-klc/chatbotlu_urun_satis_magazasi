@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>Tarzını Keşfet</h1>
+            <p>Yapay zeka asistanımızla sana en uygun kıyafetleri bul.</p>
+            <a href="#productGrid" class="cta-button">Alışverişe Başla</a>
+        </div>
+    </header>
+
+    <!-- Ürünler -->
+    <div class="container">
+        <div class="category-section">
+            <h2 class="section-title">Elbiseler</h2>
+            <div class="product-grid" id="grid-elbise"></div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="section-title">Pantolonlar</h2>
+            <div class="product-grid" id="grid-pantolon"></div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="section-title">Dış Giyim</h2>
+            <div class="product-grid" id="grid-dis-giyim"></div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="section-title">Ayakkabılar</h2>
+            <div class="product-grid" id="grid-ayakkabi"></div>
+        </div>
+
+        <div class="category-section">
+            <h2 class="section-title">Aksesuarlar</h2>
+            <div class="product-grid" id="grid-aksesuar"></div>
+        </div>
+    </div>
+{% endblock %}

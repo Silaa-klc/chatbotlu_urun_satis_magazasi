@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Ödeme | Moda Dünyası{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px;">
+    <h2 class="section-title">Ödeme Bilgileri</h2>
+    
+    <div class="checkout-container" style="display: flex; gap: 30px; flex-wrap: wrap;">
+        <div class="checkout-form" style="flex: 2; min-width: 300px;">
+            <form id="paymentForm" onsubmit="processPayment(event)">
+                <div class="form-section" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Teslimat Adresi</h3>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Ad Soyad</label>
+                        <input type="text" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^a-zA-ZğüşıöçĞÜŞİÖÇ\s]/g, '')">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Adres</label>
+                        <textarea required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; height: 80px;"></textarea>
+                    </div>
+                    <div class="form-row" style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; margin-bottom: 5px;">Şehir</label>
+                            <input type="text" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; margin-bottom: 5px;">Telefon</label>
+                            <input type="tel" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Kart Bilgileri</h3>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Kart Üzerindeki İsim</label>
+                        <input type="text" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^a-zA-ZğüşıöçĞÜŞİÖÇ\s]/g, '')">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px;">Kart Numarası</label>
+                        <input type="text" placeholder="0000 0000 0000 0000" maxlength="19" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^0-9\s]/g, '')">
+                    </div>
+                    <div class="form-row" style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; margin-bottom: 5px;">Son Kullanma Tarihi</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input type="text" placeholder="AA" maxlength="2" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <input type="text" placeholder="YY" maxlength="2" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                            </div>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; margin-bottom: 5px;">CVV</label>
+                            <input type="text" placeholder="123" maxlength="3" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="checkout-btn" style="width: 100%; margin-top: 20px; padding: 15px; background: #000; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 1.1rem;">Ödemeyi Tamamla</button>
+            </form>
+        </div>
+
+        <div class="checkout-summary" style="flex: 1; min-width: 250px;">
+            <div style="background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 140px;">
+                <h3 style="margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Sipariş Özeti</h3>
+                <div id="orderItems" style="margin-bottom: 15px; max-height: 300px; overflow-y: auto;">
+                    <!-- JS ile doldurulacak -->
+                </div>
+                <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Ara Toplam</span>
+                    <span id="subtotal">0.00 TL</span>
+                </div>
+                <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Kargo</span>
+                    <span>Ücretsiz</span>
+                </div>
+                <div class="summary-row total" style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-weight: bold; font-size: 1.2rem;">
+                    <span>Toplam</span>
+                    <span id="total">0.00 TL</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        if (cart.length === 0) {
+            window.location.href = '/sepet';
+            return;
+        }
+
+        const orderItems = document.getElementById('orderItems');
+        let total = 0;
+
+        orderItems.innerHTML = cart.map(item => {
+            total += item.price * item.quantity;
+            return `
+                <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                    <img src="${item.image}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                    <div style="flex: 1;">
+                        <div style="font-size: 0.9rem; font-weight: 500;">${item.name}</div>
+                        <div style="font-size: 0.8rem; color: #666;">${item.size ? 'Beden: ' + item.size + ' | ' : ''}${item.quantity} adet</div>
+                    </div>
+                    <div style="font-weight: 500;">${(item.price * item.quantity).toFixed(2)} TL</div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('subtotal').textContent = total.toFixed(2) + ' TL';
+        document.getElementById('total').textContent = total.toFixed(2) + ' TL';
+    });
+
+    function processPayment(e) {
+        e.preventDefault();
+        // Simüle edilmiş ödeme işlemi
+        const btn = e.target.querySelector('button[type="submit"]');
+        const originalText = btn.innerText;
+        
+        btn.disabled = true;
+        btn.innerText = 'İşleniyor...';
+
+        setTimeout(() => {
+            alert('Siparişiniz başarıyla alındı! Teşekkür ederiz.');
+            localStorage.removeItem('cart');
+            window.location.href = '/';
+        }, 2000);
+    }
+</script>
+{% endblock %}

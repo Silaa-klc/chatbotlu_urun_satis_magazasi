@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Ürün Detayı | Moda Dünyası{% endblock %}
+
+{% block content %}
+<div class="container product-detail-container" style="margin-top: 120px;">
+    <div class="product-detail-wrapper" id="productDetail">
+        <!-- İçerik JS ile yüklenecek -->
+        <div class="loading-spinner">Yükleniyor...</div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const productId = '{{ product_id }}';
+        const container = document.getElementById('productDetail');
+        
+        try {
+            const response = await fetch(`/api/products/${productId}`);
+            const product = await response.json();
+            
+            if (product.error) {
+                container.innerHTML = '<p>Ürün bulunamadı.</p>';
+                return;
+            }
+
+            // Beden seçimi için global fonksiyonlar
+            let selectedSize = null;
+            window.selectSize = (btn, size) => {
+                selectedSize = size;
+                document.querySelectorAll('.size-btn').forEach(b => {
+                    b.style.background = '#fff';
+                    b.style.color = '#000';
+                    b.style.borderColor = '#ddd';
+                });
+                btn.style.background = '#000';
+                btn.style.color = '#fff';
+                btn.style.borderColor = '#000';
+            };
+
+            window.addToCartWithSize = (event, id, name, price, image) => {
+                if (!selectedSize) {
+                    alert('Lütfen bir beden seçiniz.');
+                    return;
+                }
+                addToCart(event, id, name, price, image, selectedSize);
+            };
+
+            container.innerHTML = `
+                <div class="detail-image">
+                    <img src="${product.resim}" alt="${product.urun_adi}">
+                </div>
+                <div class="detail-info">
+                    <span class="detail-category">${product.kategori} / ${product.cinsiyet}</span>
+                    <h1 class="detail-title">${product.urun_adi}</h1>
+                    <div class="detail-price">${product.fiyat} TL</div>
+                    <p class="detail-desc">${product.detayli_aciklama}</p>
+                    
+                    <div class="detail-meta">
+                        <div class="meta-item"><strong>Renk:</strong> ${product.renk}</div>
+                        <div class="meta-item" style="margin-top: 15px;">
+                            <strong>Beden:</strong>
+                            <div class="size-selector" style="display: flex; gap: 10px; margin-top: 10px;">
+                                ${product.bedenler ? product.bedenler.map(beden => 
+                                    `<button class="size-btn" onclick="selectSize(this, '${beden}')" style="padding: 8px 15px; border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 4px; transition: all 0.2s;">${beden}</button>`
+                                ).join('') : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-actions">
+                        <button onclick="addToCartWithSize(event, ${product.id}, '${product.urun_adi.replace(/'/g, "\\'")}', ${product.fiyat}, '${product.resim}')" class="add-to-cart-btn large">
+                            <i class="fas fa-shopping-bag"></i> Sepete Ekle
+                        </button>
+                    </div>
+                </div>
+            `;
+        } catch (error) {
+            console.error('Hata:', error);
+            container.innerHTML = '<p>Bir hata oluştu.</p>';
+        }
+    });
+</script>
+{% endblock %}

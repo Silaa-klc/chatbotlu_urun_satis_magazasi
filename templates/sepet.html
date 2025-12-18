@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Sepetim | Moda Dünyası{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 120px;">
+    <h2 class="section-title">Alışveriş Sepetim</h2>
+    
+    <div class="cart-layout">
+        <div class="cart-items" id="cartItems">
+            <!-- Sepet öğeleri JS ile buraya gelecek -->
+            <p class="empty-cart-msg">Sepetinizde ürün bulunmamaktadır.</p>
+        </div>
+        
+        <div class="cart-summary">
+            <h3>Sipariş Özeti</h3>
+            <div class="summary-row">
+                <span>Ara Toplam</span>
+                <span id="subtotal">0.00 TL</span>
+            </div>
+            <div class="summary-row">
+                <span>Kargo</span>
+                <span id="shipping">Ücretsiz</span>
+            </div>
+            <div class="summary-row total">
+                <span>Toplam</span>
+                <span id="total">0.00 TL</span>
+            </div>
+            <button class="checkout-btn" onclick="window.location.href='/odeme'">Ödemeye Geç</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', loadCartPage);
+
+    function loadCartPage() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const container = document.getElementById('cartItems');
+        const subtotalEl = document.getElementById('subtotal');
+        const totalEl = document.getElementById('total');
+        
+        if (cart.length === 0) {
+            container.innerHTML = '<div class="empty-state"><i class="fas fa-shopping-basket"></i><p>Sepetiniz boş.</p><a href="/" class="continue-shopping">Alışverişe Başla</a></div>';
+            subtotalEl.textContent = '0.00 TL';
+            totalEl.textContent = '0.00 TL';
+            return;
+        }
+
+        let total = 0;
+        container.innerHTML = cart.map((item, index) => {
+            total += item.price * item.quantity;
+            return `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <h4>${item.name}</h4>
+                        ${item.size ? `<div class="cart-item-size" style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">Beden: ${item.size}</div>` : ''}
+                        <div class="cart-item-price">${item.price} TL x ${item.quantity}</div>
+                    </div>
+                    <button onclick="removeFromCart(${index})" class="remove-btn"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        }).join('');
+
+        subtotalEl.textContent = total.toFixed(2) + ' TL';
+        totalEl.textContent = total.toFixed(2) + ' TL';
+    }
+
+    function removeFromCart(index) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        cart.splice(index, 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+        loadCartPage();
+    }
+</script>
+{% endblock %}
