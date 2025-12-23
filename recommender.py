@@ -5,6 +5,61 @@ import json
 import os
 import random
 import re
+import csv
+
+# Dataset'i CSV dosyasından yükle
+def load_dataset():
+    """
+    Chatbot için soru-cevap datasetini CSV dosyasından yükler.
+    """
+    file_path = os.path.join(os.path.dirname(__file__), 'dataset.csv')
+    dataset = []
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                dataset.append({
+                    'soru': row['soru'].strip('"'),
+                    'cevap': row['cevap'].strip('"'),
+                    'intent': row['intent']
+                })
+    except FileNotFoundError:
+        print("dataset.csv bulunamadı, varsayılan yanıtlar kullanılacak.")
+    return dataset
+
+# Dataset yükle
+chatbot_dataset = load_dataset()
+
+# Dataset için TF-IDF vektörleştirici
+dataset_questions = [item['soru'] for item in chatbot_dataset] if chatbot_dataset else []
+if dataset_questions:
+    dataset_tfidf_vectorizer = TfidfVectorizer()
+    dataset_tfidf_matrix = dataset_tfidf_vectorizer.fit_transform(dataset_questions)
+else:
+    dataset_tfidf_vectorizer = None
+    dataset_tfidf_matrix = None
+
+def find_best_dataset_match(query, threshold=0.4):
+    """
+    Kullanıcı sorgusuna en uygun dataset cevabını bulur.
+    Eşik değerin altındaysa None döner.
+    """
+    if not dataset_tfidf_vectorizer or dataset_tfidf_matrix is None:
+        return None
+    
+    query_vec = dataset_tfidf_vectorizer.transform([query.lower()])
+    similarities = cosine_similarity(query_vec, dataset_tfidf_matrix)[0]
+    
+    best_idx = similarities.argmax()
+    best_score = similarities[best_idx]
+    
+    if best_score >= threshold:
+        return {
+            'cevap': chatbot_dataset[best_idx]['cevap'],
+            'intent': chatbot_dataset[best_idx]['intent'],
+            'skor': best_score
+        }
+    return None
 
 # Veriyi JSON dosyasından yükle
 # Data reload trigger v2
@@ -352,13 +407,24 @@ def create_outfit(query, df):
 def get_recommendations(user_query, context=None):
     """
     Kullanıcı sorgusuna göre en benzer ürünleri döndürür.
+    Önce dataset'ten eşleşme arar, bulamazsa ürün araması yapar.
     """
     if context is None:
         context = {}
 
+    # ÖNCELİKLİ: Dataset'ten eşleşme ara (soru-cevap çiftleri)
+    dataset_match = find_best_dataset_match(user_query)
+    if dataset_match and dataset_match['skor'] >= 0.6:
+        # Yüksek eşleşme skoru - direkt dataset cevabını kullan
+        matched_intent = dataset_match['intent']
+        
+        # Eğer intent 'search' değilse, text yanıtı döndür
+        if matched_intent != 'search':
+            return {"type": "text", "content": dataset_match['cevap']}, context
+
     intent = get_intent(user_query)
     
-    # Standart Yanıtlar
+    # Standart Yanıtlar - Dataset'te bulunamazsa bunları kullan
     responses = {
         "greeting": "Merhaba! Size nasıl yardımcı olabilirim? Bugün ne tarz bir kıyafet arıyorsunuz?",
         "thanks": "Rica ederim! Başka bir isteğiniz var mı? Size her zaman yardımcı olmaktan mutluluk duyarım.",
@@ -368,6 +434,10 @@ def get_recommendations(user_query, context=None):
         "payment": "💳 **Ödeme Seçenekleri:** Kredi kartına 12 taksit, kapıda ödeme ve havale/EFT seçeneklerimiz mevcuttur. Ödemeleriniz 256-bit SSL ile güvence altındadır.",
         "contact": "📞 **İletişim:** Bize 0850 123 45 67 numarasından veya destek@modadunyasi.com adresinden 7/24 ulaşabilirsiniz."
     }
+    
+    # Dataset'ten düşük skorlu eşleşme varsa ve intent standart yanıtlarda varsa, dataset'i kullan
+    if dataset_match and dataset_match['skor'] >= 0.4 and dataset_match['intent'] in responses:
+        return {"type": "text", "content": dataset_match['cevap']}, context
     
     if intent in responses:
         return {"type": "text", "content": responses[intent]}, context

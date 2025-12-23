@@ -99,7 +99,7 @@ body {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80');
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1600&q=80');
     background-size: cover;
     background-position: center;
     height: 70vh;
@@ -178,7 +178,7 @@ body {
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .product-image {
@@ -231,7 +231,8 @@ body {
     grid-template-columns: 1fr 1fr;
     gap: 4rem;
     margin-bottom: 4rem;
-    margin-top: 8rem; /* Added margin for fixed navbar */
+    margin-top: 8rem;
+    /* Added margin for fixed navbar */
 }
 
 .detail-image img {
@@ -287,7 +288,8 @@ body {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 3rem;
-    margin-top: 8rem; /* Added margin for fixed navbar */
+    margin-top: 8rem;
+    /* Added margin for fixed navbar */
 }
 
 .cart-item {
@@ -401,7 +403,7 @@ body {
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s;
 }
 
@@ -417,7 +419,7 @@ body {
     height: 500px;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
     display: none;
     flex-direction: column;
     overflow: hidden;
@@ -466,7 +468,7 @@ body {
     background-color: white;
     color: #333;
     border-bottom-left-radius: 2px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .user-message {
@@ -529,11 +531,11 @@ body {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .cart-layout {
         grid-template-columns: 1fr;
     }
-    
+
     .hero-content h1 {
         font-size: 2.5rem;
     }
@@ -545,6 +547,7 @@ body {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -555,14 +558,16 @@ body {
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     margin-bottom: 15px;
     border: 1px solid #eee;
-    width: 240px; /* Fixed width for better look in chat */
+    width: 240px;
+    /* Fixed width for better look in chat */
     margin-left: auto;
     margin-right: auto;
     animation: slideDownFade 0.5s ease-out forwards;
-    opacity: 0; /* Start invisible to prevent flash */
+    opacity: 0;
+    /* Start invisible to prevent flash */
 }
 
 .chat-card-image-container {
@@ -603,9 +608,17 @@ body {
 }
 
 @keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.7; }
-    100% { opacity: 1; }
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
 }
 
 .chat-product-price {
